@@ -1,0 +1,99 @@
+{
+  "session_id": "732af8a2",
+  "session_summary": {
+    "total_events": 4,
+    "payments_processed": 1,
+    "gpt5_decisions": 2,
+    "processor_failures": 1,
+    "total_gpt5_tokens": 632
+  },
+  "gpt5_parameter_usage": {
+    "reasoning_effort_distribution": {
+      "high": 1,
+      "medium": 1
+    },
+    "verbosity_distribution": {
+      "high": 2
+    }
+  },
+  "payments_summary": {
+    "pay_demo_001": {
+      "events": 4,
+      "gpt5_decisions": 2,
+      "failures": 1
+    }
+  },
+  "compliance_attestation": {
+    "all_gpt5_decisions_logged": true,
+    "reasoning_chain_preserved": true,
+    "audit_file_location": "demo_audit.jsonl",
+    "generated_at": "2025-08-10T10:01:50.272513"
+  },
+  "payment_trail_pay_demo_001": {
+    "payment_id": "pay_demo_001",
+    "audit_summary": {
+      "total_events": 4,
+      "event_types": [
+        "payment_routing",
+        "processor_failure",
+        "fallback_decision"
+      ],
+      "gpt5_decisions": 2,
+      "processor_failures": 1,
+      "gpt5_tokens_total": 632,
+      "duration": 0.000182
+    },
+    "gpt5_reasoning_chain": [
+      {
+        "timestamp": "2025-08-10T10:01:50.272243",
+        "reasoning": "Selected Stripe due to lowest fees and high success rate for this transaction size",
+        "parameters": {
+          "reasoning_effort": "medium",
+          "verbosity": "high"
+        },
+        "tokens": 245
+      },
+      {
+        "timestamp": "2025-08-10T10:01:50.272425",
+        "reasoning": "Stripe frozen, selected PayPal as primary fallback with good health metrics",
+        "parameters": {
+          "reasoning_effort": "high",
+          "verbosity": "high"
+        },
+        "tokens": 387
+      }
+    ],
+    "complete_timeline": [
+      {
+        "timestamp": "2025-08-10T10:01:50.272243",
+        "event_type": "payment_routing",
+        "processor": "stripe",
+        "summary": "GPT-5 routed to stripe (confidence: 92.0%)"
+      },
+      {
+        "timestamp": "2025-08-10T10:01:50.272330",
+        "event_type": "processor_failure",
+        "processor": "stripe",
+        "summary": "Processor stripe failed: Stripe account temporarily frozen"
+      },
+      {
+        "timestamp": "2025-08-10T10:01:50.272384",
+        "event_type": "fallback_decision",
+        "processor": null,
+        "summary": "Fallback escalated: Account freeze detected"
+      },
+      {
+        "timestamp": "2025-08-10T10:01:50.272425",
+        "event_type": "payment_routing",
+        "processor": "paypal",
+        "summary": "GPT-5 routed to paypal (confidence: 87.0%)"
+      }
+    ],
+    "compliance_data": {
+      "audit_file": "demo_audit.jsonl",
+      "session_id": "732af8a2",
+      "all_decisions_logged": true,
+      "gpt5_parameters_recorded": true
+    }
+  }
+}

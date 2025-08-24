@@ -1,0 +1,371 @@
+
+.container {
+  background: #f9fafb;
+  min-height: 100vh;
+  color: #1f2937;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.logoIcon {
+  color: #f59e0b;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+}
+
+.navLinks span {
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navLinks span:hover {
+  color: #1f2937;
+}
+
+.navLinks span:first-child {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.main {
+  padding: 2rem;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup:last-child {
+  grid-column: 1 / -1;
+}
+
+.inputGroup label {
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.input, .select {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #1f2937;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus, .select:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.submitButton {
+  background: #1f2937;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #374151;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.agentButton {
+  background: transparent;
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.agentButton:hover {
+  background: #f59e0b;
+  color: white;
+}
+
+.terminal {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.terminalHeader {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.terminalText {
+  color: #6b7280;
+}
+
+.success {
+  color: #059669;
+  margin-top: 0.5rem;
+}
+
+.processorList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.processor {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.processorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.processorName {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.statusActive {
+  color: #059669;
+  font-size: 0.875rem;
+}
+
+.processorStats {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.processorButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.freezeButton, .unfreezeButton {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.freezeButton:hover, .unfreezeButton:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.tagGroup {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #3b82f6;
+}
+
+.riskLevels {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.riskMinimal, .riskMedium, .riskHigh {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.riskMinimal {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #16a34a;
+}
+
+.riskMedium {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+.riskHigh {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+.generateButton {
+  background: #1f2937;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.generateButton:hover {
+  background: #374151;
+}
+
+.riskMetrics {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.riskScore {
+  text-align: center;
+}
+
+.riskLabel {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.riskValue {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #059669;
+}
+
+.riskChart {
+  height: 100px;
+  background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #059669 100%);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.riskAnalysis {
+  font-size: 0.875rem;
+}
+
+.analysisHeader {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.analysisReason {
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.reasoningBar {
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .riskMetrics {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
