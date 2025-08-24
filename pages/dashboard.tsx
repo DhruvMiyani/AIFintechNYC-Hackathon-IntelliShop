@@ -4,6 +4,8 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import styles from "../styles/Dashboard.module.css";
+import RoutingOverlay from "../components/RoutingOverlay";
+import AnalysisComparisonOverlay from "../components/AnalysisComparisonOverlay";
 
 const Dashboard: NextPage = () => {
   const [amount, setAmount] = useState("25000");
@@ -34,6 +36,8 @@ const Dashboard: NextPage = () => {
   const [chartReasoningSteps, setChartReasoningSteps] = useState([]);
   const [reasoningComparison, setReasoningComparison] = useState(null);
   const [isComparingReasoning, setIsComparingReasoning] = useState(false);
+  const [showRoutingOverlay, setShowRoutingOverlay] = useState(false);
+  const [showAnalysisComparison, setShowAnalysisComparison] = useState(false);
 
   const handleSubmit = async () => {
     setIsProcessing(true);
@@ -99,6 +103,37 @@ const Dashboard: NextPage = () => {
       setLastResult('Error: Failed to connect to Visa MCP API');
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const generateAndRouteData = async () => {
+    console.log("Generating synthetic data and routing to real-time display...");
+    try {
+      // First, trigger synthetic data generation and routing
+      const routingResponse = await fetch('/api/synthetic-routing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          count: 20,
+          pattern: 'mixed',  // Can be 'normal', 'high_risk', 'refunds', 'international', 'crypto'
+          delay_ms: 300
+        })
+      });
+      
+      const routingResult = await routingResponse.json();
+      
+      if (routingResult.success) {
+        // Open real-time routing page in new tab
+        window.open('/realtime-routing', '_blank');
+        
+        // Show success message
+        alert(`✅ Sent ${routingResult.transactions_sent} synthetic transactions to real-time routing display!`);
+      } else {
+        alert(`❌ Failed to send transactions: ${routingResult.error}`);
+      }
+    } catch (error) {
+      console.error('Failed to generate and route data:', error);
+      alert('Failed to connect to routing service. Make sure WebSocket service is running.');
     }
   };
 
@@ -934,12 +969,33 @@ const Dashboard: NextPage = () => {
                 {isAnalyzing ? "Claude Analyzing..." : "Analyze Transaction Risk"}
               </button>
               <button 
-                onClick={runComplexityComparison}
+                onClick={() => setShowAnalysisComparison(true)}
                 disabled={isAnalyzing}
                 className={styles.agentButton}
-                style={{ background: 'linear-gradient(45deg, #FF6B6B, #4ECDC4)', border: 'none' }}
+                style={{ 
+                  background: 'linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 50%, #45B7D1 100%)', 
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(255, 107, 107, 0.3)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
               >
-                🤖 Compare Analysis Complexity
+                <span style={{ position: 'relative', zIndex: 2 }}>
+                  🤖 Compare Analysis Complexity
+                </span>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                    animation: 'shine 3s infinite'
+                  }}
+                ></div>
               </button>
             </div>
             {analysisResults && (
@@ -1071,6 +1127,46 @@ const Dashboard: NextPage = () => {
               </button>
               <button onClick={generateTestData} className={styles.agentButton}>
                 Generate Test Scenarios
+              </button>
+              <button 
+                onClick={generateAndRouteData} 
+                className={styles.agentButton}
+                style={{ 
+                  background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  fontWeight: 'bold'
+                }}
+              >
+                🚀 Generate & Route to Live Display
+              </button>
+              
+              <button 
+                onClick={() => setShowRoutingOverlay(true)}
+                className={styles.agentButton}
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+              >
+                <span style={{ position: 'relative', zIndex: 2 }}>
+                  ⚡ Live Routing Engine Overlay
+                </span>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                    animation: 'shine 2s infinite'
+                  }}
+                ></div>
               </button>
             </div>
             {syntheticData && (
@@ -1335,6 +1431,18 @@ const Dashboard: NextPage = () => {
           📊 Claude Data Analysis: {analysisResults ? `Risk analysis complete: ${analysisResults.risk_level} risk level (${analysisResults.freeze_probability}% freeze probability) → ${analysisResults.recommendations[0] || 'Pattern analysis suggests continued monitoring'}.` : 'Advanced Stripe transaction analysis powered by Claude with configurable complexity and freeze trigger detection.'}
         </div>
       </main>
+      
+      {/* Routing Overlay */}
+      <RoutingOverlay 
+        isOpen={showRoutingOverlay} 
+        onClose={() => setShowRoutingOverlay(false)} 
+      />
+      
+      {/* Analysis Comparison Overlay */}
+      <AnalysisComparisonOverlay 
+        isOpen={showAnalysisComparison} 
+        onClose={() => setShowAnalysisComparison(false)} 
+      />
     </div>
   );
 };

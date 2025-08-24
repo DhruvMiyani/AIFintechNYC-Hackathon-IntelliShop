@@ -336,13 +336,13 @@ class RealtimeRoutingEngine:
         # Check if initial selection is available
         processor_health = self.processors.get(initial_processor.lower())
         if processor_health and processor_health.status == ProcessorStatus.FROZEN:
-            # Demonstrate re-routing
+            # CRITICAL: Show re-routing scenario
             step = RoutingStep(
                 step=step_num,
                 timestamp=time.time(),
                 processor=initial_processor,
                 action=RoutingAction.REJECTED,
-                reason=f'Primary processor frozen - account freeze risk: {processor_health.risk:.0f}%',
+                reason=f'🚨 FROZEN: {initial_processor.upper()} account suspended! Chargebacks: 2.1% | Refunds: 15% | Risk Score: {processor_health.risk:.0f}%',
                 confidence=0,
                 processing_time=600
             )
@@ -354,6 +354,15 @@ class RealtimeRoutingEngine:
                 'step': step.to_dict(),
                 'timestamp': time.time()
             })
+            
+            # Send special re-routing alert
+            await self.broadcast_message({
+                'type': 'rerouting_alert',
+                'transaction_id': transaction.id,
+                'message': f'⚠️ RE-ROUTING IN PROGRESS: {initial_processor.upper()} is frozen, finding alternative processor...',
+                'timestamp': time.time()
+            })
+            
             step_num += 1
             
             # Select fallback processor
@@ -364,7 +373,7 @@ class RealtimeRoutingEngine:
                 timestamp=time.time(),
                 processor=fallback_processor,
                 action=RoutingAction.FALLBACK,
-                reason=f'Auto-rerouting to {fallback_processor} (freeze avoidance active)',
+                reason=f'✅ RE-ROUTED SUCCESSFULLY: Using {fallback_processor.upper()} as alternative (95% freeze resistance)',
                 confidence=92,
                 processing_time=400
             )
@@ -503,6 +512,93 @@ class RealtimeRoutingEngine:
         self.simulation_running = False
         logger.info("Stopping real-time routing simulation")
     
+    async def route_synthetic_transaction(self, websocket, transaction_data):
+        """Route a specific synthetic transaction from the synthetic data generator"""
+        # Create transaction from synthetic data
+        transaction_id = transaction_data.get('id', str(uuid.uuid4())[:8])
+        amount = transaction_data.get('amount', random.uniform(10, 500))
+        description = transaction_data.get('description', 'Synthetic transaction')
+        
+        # Send new transaction notification
+        transaction = {
+            'id': transaction_id,
+            'amount': amount,
+            'description': description,
+            'currency': transaction_data.get('currency', 'USD'),
+            'status': 'routing',
+            'selectedProcessor': None,
+            'routingSteps': [],
+            'startTime': time.time()
+        }
+        
+        await websocket.send(json.dumps({
+            'type': 'new_transaction',
+            'data': transaction
+        }))
+        
+        # Simulate routing process
+        processors = list(self.processors.keys())
+        random.shuffle(processors)
+        
+        step_num = 1
+        selected_processor = None
+        
+        for processor in processors:
+            processor_health = self.processors[processor]
+            
+            # Evaluate processor
+            action = 'evaluating'
+            confidence = random.randint(60, 95)
+            
+            if processor_health['status'] == ProcessorStatus.FROZEN:
+                action = 'rejected'
+                reason = f"{processor.upper()} is currently frozen"
+            elif processor_health['status'] == ProcessorStatus.UNAVAILABLE:
+                action = 'rejected'
+                reason = f"{processor.upper()} is unavailable"
+            elif processor_health['risk'] > 70:
+                action = 'rejected'
+                reason = f"{processor.upper()} risk level too high ({processor_health['risk']}%)"
+            elif amount > 1000 and processor in ['paypal', 'square']:
+                action = 'rejected'
+                reason = f"Amount exceeds {processor.upper()} limits for this merchant"
+            else:
+                action = 'selected'
+                reason = self._get_routing_reason(processor, amount, description)
+                selected_processor = processor
+            
+            # Send routing step
+            step = {
+                'step': step_num,
+                'timestamp': time.time(),
+                'processor': processor,
+                'action': action,
+                'reason': reason,
+                'confidence': confidence if action == 'selected' else 0,
+                'processingTime': random.randint(5, 50)
+            }
+            
+            await websocket.send(json.dumps({
+                'type': 'routing_step',
+                'transaction_id': transaction_id,
+                'step': step
+            }))
+            
+            step_num += 1
+            await asyncio.sleep(0.3)  # Small delay between steps
+            
+            if selected_processor:
+                break
+        
+        # Complete transaction
+        transaction['status'] = 'completed' if selected_processor else 'failed'
+        transaction['selectedProcessor'] = selected_processor
+        
+        await websocket.send(json.dumps({
+            'type': 'transaction_complete',
+            'data': transaction
+        }))
+    
     async def _transaction_generator(self):
         """Generate transactions at random intervals"""
         while self.simulation_running:
@@ -514,7 +610,7 @@ class RealtimeRoutingEngine:
                 await self.process_transaction(template)
 
 # WebSocket handler
-async def websocket_handler(websocket, path):
+async def websocket_handler(websocket):
     """Handle WebSocket connections"""
     routing_engine = RealtimeRoutingEngine()
     
@@ -541,6 +637,11 @@ async def websocket_handler(websocket, path):
                         'running': False,
                         'timestamp': time.time()
                     }))
+                
+                elif command == 'route_transaction':
+                    # Route a specific transaction (from synthetic data)
+                    transaction_data = data.get('transaction', {})
+                    await routing_engine.route_synthetic_transaction(websocket, transaction_data)
                 
             except json.JSONDecodeError:
                 logger.warning("Received invalid JSON message")
