@@ -16,7 +16,7 @@ from processors.stripe import StripeProcessor
 from processors.paypal import PayPalProcessor
 from processors.visa import VisaProcessor
 from claude_router import ClaudeRouter, FailureType
-from data_analysis_api import router as data_router
+from data_analysis_api import app as data_app
 
 
 app = FastAPI(
@@ -26,7 +26,7 @@ app = FastAPI(
 )
 
 # Include data analysis API
-app.include_router(data_router)
+# app.include_router(data_router)  # TODO: Fix router import
 
 
 # Initialize processors

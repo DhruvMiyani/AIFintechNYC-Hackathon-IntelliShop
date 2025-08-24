@@ -14,7 +14,7 @@ import uuid
 import random
 from decimal import Decimal
 
-from openai import AsyncOpenAI
+import anthropic
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -77,11 +77,11 @@ class GPT5StripeDataGenerator:
     """
     
     def __init__(self):
-        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("ANTHROPIC_API_KEY")
         if not self.api_key:
-            raise ValueError("OPENAI_API_KEY not found in environment")
+            raise ValueError("ANTHROPIC_API_KEY not found in environment")
             
-        self.client = AsyncOpenAI(api_key=self.api_key)
+        self.client = anthropic.AsyncAnthropic(api_key=self.api_key)
         self.generated_transactions: List[StripeTransaction] = []
         self.generation_history: List[GPT5DataGeneration] = []
     

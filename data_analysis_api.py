@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 import uvicorn
 
 from claude_client import ClaudeClient
-from claude_stripe_data_generator import ClaudeStripeDataGenerator, StripeTransaction
+from stripe_synthetic_data_generator import GPT5StripeDataGenerator as ClaudeStripeDataGenerator, StripeTransaction
 from risk_pattern_analyzer import ClaudeRiskAnalyzer, RiskAnalysis
 from realtime_data_simulator import RealtimeStreamSimulator, StreamingMode, StreamDataStore
 from synthetic_data_generator import ClaudeSyntheticDataGenerator, SyntheticTransaction
@@ -122,7 +122,7 @@ async def health_check():
 
 
 # Initialize GPT-5 data generator (legacy)
-legacy_data_generator = GPT5SyntheticDataGenerator()
+legacy_data_generator = ClaudeSyntheticDataGenerator()
 
 
 @app.post("/data/generate", response_model=Dict[str, Any])

@@ -14,7 +14,7 @@ from enum import Enum
 import statistics
 
 from claude_client import ClaudeClient
-from stripe_synthetic_data_generator import StripeTransaction, TransactionType
+from stripe_synthetic_data_generator import StripeTransaction
 
 
 class RiskTier(Enum):
@@ -54,7 +54,7 @@ class ClaudeRiskAnalyzer:
     """
     
     def __init__(self):
-        self.gpt5_client = GPT5Client()
+        self.claude_client = ClaudeClient()
         
         # Stripe freeze thresholds (based on real Stripe policies)
         self.FREEZE_THRESHOLDS = {
