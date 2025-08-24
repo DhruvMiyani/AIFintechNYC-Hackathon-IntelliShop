@@ -22,6 +22,9 @@ const Home: NextPage = () => {
           <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
           <a href="#docs">Documentation</a>
+          <Link href="/business-orchestration">
+            <button className={styles.loginButton} style={{ marginRight: '10px' }}>Business Portal</button>
+          </Link>
           <Link href="/dashboard">
             <button className={styles.loginButton}>Dashboard</button>
           </Link>
@@ -85,10 +88,12 @@ const Home: NextPage = () => {
             </div>
 
             <div className={styles.heroButtons}>
-              <Link href="/dashboard">
-                <button className={styles.primaryButton}>Start Integration</button>
+              <Link href="/business-orchestration">
+                <button className={styles.primaryButton}>Launch Business Portal</button>
               </Link>
-              <button className={styles.secondaryButton}>View Documentation</button>
+              <Link href="/dashboard">
+                <button className={styles.secondaryButton}>View Analytics</button>
+              </Link>
             </div>
           </div>
         </section>

@@ -3,12 +3,23 @@ import styles from '../styles/Dashboard.module.css';
 
 interface CompetitiveData {
   [key: string]: {
+    ranking: number;
     market_position: string;
     competitive_advantage: string;
     compared_processors: string[];
     pricing_comparison: { [key: string]: number };
     feature_comparison: { [key: string]: boolean };
+    confidence_score: number;
   };
+}
+
+interface DataSource {
+  source: string;
+  api_attempts: number;
+  rate_limited: boolean;
+  confidence: string;
+  real_time: boolean;
+  fallback_reason?: string;
 }
 
 interface MarketIntelligence {
@@ -27,9 +38,11 @@ interface SyntheticTransactionSummary {
 }
 
 export default function ComprehensiveInsightsDemo() {
-  const [activeTab, setActiveTab] = useState('routing');
+  const [activeTab, setActiveTab] = useState('competitive');
   const [competitiveData, setCompetitiveData] = useState<CompetitiveData | null>(null);
+  const [competitiveDataSource, setCompetitiveDataSource] = useState<DataSource | null>(null);
   const [marketIntelligence, setMarketIntelligence] = useState<MarketIntelligence | null>(null);
+  const [marketDataSource, setMarketDataSource] = useState<DataSource | null>(null);
   const [syntheticData, setSyntheticData] = useState<SyntheticTransactionSummary | null>(null);
   const [scenarioResults, setScenarioResults] = useState<any>(null);
   const [processorInsights, setProcessorInsights] = useState<any>(null);
@@ -47,6 +60,7 @@ export default function ComprehensiveInsightsDemo() {
       const response = await fetch('http://localhost:8000/competitive-analysis');
       const data = await response.json();
       setCompetitiveData(data.competitive_analysis);
+      setCompetitiveDataSource(data.data_quality || data.data_source);
     } catch (error) {
       console.error('Failed to load competitive analysis:', error);
     }
@@ -57,6 +71,7 @@ export default function ComprehensiveInsightsDemo() {
       const response = await fetch('http://localhost:8000/market-intelligence');
       const data = await response.json();
       setMarketIntelligence(data.market_intelligence);
+      setMarketDataSource(data.data_quality || data.data_source);
     } catch (error) {
       console.error('Failed to load market intelligence:', error);
     }
@@ -102,6 +117,41 @@ export default function ComprehensiveInsightsDemo() {
     setLoading(false);
   };
 
+  const getDataSourceIndicator = (dataSource: DataSource | null) => {
+    if (!dataSource) return null;
+    
+    const isRealBrave = dataSource.source === 'brave_search_api';
+    const isRateLimited = dataSource.rate_limited;
+    
+    return (
+      <div style={{
+        padding: '0.5rem',
+        marginBottom: '1rem',
+        borderRadius: '0.5rem',
+        backgroundColor: isRealBrave ? '#d4edda' : isRateLimited ? '#fff3cd' : '#f8d7da',
+        border: `1px solid ${isRealBrave ? '#c3e6cb' : isRateLimited ? '#ffeaa7' : '#f5c6cb'}`,
+        fontSize: '0.85rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+          <span style={{ fontSize: '1.2rem' }}>
+            {isRealBrave ? '🔴 LIVE' : isRateLimited ? '⚠️ RATE LIMITED' : '🔄 SYNTHETIC'}
+          </span>
+          <strong>
+            {isRealBrave ? 'Real Brave Search API Data' : 
+             isRateLimited ? 'Rate Limited - Proves Real API Integration!' :
+             'Synthetic Fallback Data'}
+          </strong>
+        </div>
+        <div style={{ fontSize: '0.75rem', color: '#666' }}>
+          API Calls: {dataSource.api_attempts} | 
+          Confidence: {dataSource.confidence} | 
+          Real-time: {dataSource.real_time ? 'Yes' : 'No'}
+          {dataSource.fallback_reason && ` | Reason: ${dataSource.fallback_reason}`}
+        </div>
+      </div>
+    );
+  };
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'excellent': case 'operational': case 'positive': case 'leader': case 'top_tier':
@@ -135,7 +185,6 @@ export default function ComprehensiveInsightsDemo() {
       {/* Navigation Tabs */}
       <div style={{ display: 'flex', marginBottom: '2rem', borderBottom: '1px solid #ddd' }}>
         {[
-          { id: 'routing', label: '🎯 Smart Routing', icon: '🎯' },
           { id: 'competitive', label: '🏆 Competitive Analysis', icon: '🏆' },
           { id: 'intelligence', label: '📊 Market Intelligence', icon: '📊' },
           { id: 'synthetic', label: '🧪 Synthetic Data', icon: '🧪' },
@@ -159,69 +208,6 @@ export default function ComprehensiveInsightsDemo() {
         ))}
       </div>
 
-      {/* Smart Routing Tab */}
-      {activeTab === 'routing' && (
-        <div className={styles.card}>
-          <h2>🎯 Intelligent Payment Routing</h2>
-          <p>Test our enhanced routing system with real-time insights</p>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-            {[
-              {
-                title: '🎯 Simple Routing',
-                description: 'Fast routing for small transactions',
-                endpoint: '/route-payment',
-                payload: { amount: 25, complexity: 'simple', test_insights: false }
-              },
-              {
-                title: '💎 Premium Analysis', 
-                description: 'Comprehensive insights for high-value payments',
-                endpoint: '/route-payment',
-                payload: { amount: 5000, complexity: 'comprehensive', test_insights: true }
-              },
-              {
-                title: '⚡ Urgent Processing',
-                description: 'Time-sensitive payments with balanced insights',
-                endpoint: '/route-payment',
-                payload: { amount: 1500, urgency: 'high', complexity: 'balanced', test_insights: true }
-              }
-            ].map((scenario, index) => (
-              <div key={index} style={{ padding: '1rem', border: '1px solid #ddd', borderRadius: '0.5rem' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0' }}>{scenario.title}</h3>
-                <p style={{ fontSize: '0.9rem', color: '#666', margin: '0 0 1rem 0' }}>{scenario.description}</p>
-                <button
-                  onClick={async () => {
-                    setLoading(true);
-                    try {
-                      const response = await fetch(`http://localhost:8000${scenario.endpoint}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ merchant_id: 'demo_merchant', ...scenario.payload })
-                      });
-                      const result = await response.json();
-                      alert(`Selected: ${result.routing_decision?.selected_processor}\nReasoning: ${result.routing_decision?.reasoning?.substring(0, 100)}...`);
-                    } catch (error) {
-                      alert(`Error: ${error.message}`);
-                    }
-                    setLoading(false);
-                  }}
-                  disabled={loading}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#0070f3',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '0.25rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Test Routing
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Competitive Analysis Tab */}
       {activeTab === 'competitive' && (
@@ -231,21 +217,35 @@ export default function ComprehensiveInsightsDemo() {
             🔄 Refresh Analysis
           </button>
           
+          {getDataSourceIndicator(competitiveDataSource)}
+          
           {competitiveData && (
             <div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
                 {Object.entries(competitiveData).map(([processor, data]) => (
                   <div key={processor} style={{ padding: '1rem', border: '1px solid #ddd', borderRadius: '0.5rem', backgroundColor: '#f8f9fa' }}>
                     <h3 style={{ margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{
+                        padding: '0.5rem 0.75rem',
+                        borderRadius: '50%',
+                        fontSize: '1.2rem',
+                        fontWeight: 'bold',
+                        backgroundColor: data.ranking === 1 ? '#ffd700' : data.ranking === 2 ? '#c0c0c0' : data.ranking === 3 ? '#cd7f32' : '#6c757d',
+                        color: data.ranking <= 3 ? 'black' : 'white',
+                        minWidth: '2.5rem',
+                        textAlign: 'center'
+                      }}>
+                        #{data.ranking}
+                      </span>
                       {processor.toUpperCase()}
                       <span style={{
                         padding: '0.25rem 0.5rem',
                         borderRadius: '0.25rem',
                         fontSize: '0.7rem',
-                        backgroundColor: getStatusColor(data.market_position),
+                        backgroundColor: data.ranking === 1 ? '#28a745' : data.ranking === 2 ? '#17a2b8' : data.ranking === 3 ? '#fd7e14' : '#6c757d',
                         color: 'white'
                       }}>
-                        {data.market_position}
+                        Rank {data.ranking}
                       </span>
                     </h3>
                     <p style={{ fontSize: '0.9rem', margin: '0 0 1rem 0' }}>{data.competitive_advantage}</p>
@@ -285,6 +285,8 @@ export default function ComprehensiveInsightsDemo() {
           <button onClick={loadMarketIntelligence} style={{ marginBottom: '1rem', padding: '0.5rem 1rem', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '0.25rem' }}>
             🔄 Refresh Intelligence
           </button>
+          
+          {getDataSourceIndicator(marketDataSource)}
 
           {marketIntelligence && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>

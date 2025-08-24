@@ -120,6 +120,27 @@ class ProcessorRegistry:
             api_endpoint="https://sandbox.api.visa.com",
             fallback_priority=3
         )
+        
+        # Crossmint (Crypto/Stablecoin)
+        self.processors["crossmint"] = PaymentProcessor(
+            id="crossmint",
+            name="Crossmint",
+            type="crypto",
+            status=ProcessorStatus.HEALTHY,
+            capabilities=["stablecoin_payments", "crypto", "instant_settlement", "USDC"],
+            fee_structure={"percentage": 0.015, "fixed": 0.00},
+            limits={"daily_volume": 1000000, "single_transaction": 1000000},
+            health=ProcessorHealthMetrics(
+                success_rate=0.992,
+                avg_response_time=156,
+                failure_count_24h=2,
+                last_failure_time=datetime.utcnow() - timedelta(hours=8),
+                uptime_percentage=99.88,
+                freeze_risk_score=1.2
+            ),
+            api_endpoint="https://staging.crossmint.com/api/2025-06-09",
+            fallback_priority=4
+        )
     
     async def get_processor_for_gpt5_analysis(self, transaction_context: Dict[str, Any]) -> Dict[str, Any]:
         """

@@ -471,30 +471,50 @@ class SyntheticDataGenerator:
         return insights
     
     def _generate_competitive_insights(self, processor_id: str, count: int) -> List[CompetitiveAnalysisInsight]:
-        """Generate synthetic competitive analysis insights"""
+        """Generate synthetic competitive analysis insights with numerical rankings"""
         insights = []
         all_processors = [p.id for p in self.processors]
         competitors = [p for p in all_processors if p != processor_id]
         
+        # Define ranking system based on realistic market data
+        market_rankings = {
+            "visa": 1,      # Market leader
+            "stripe": 2,    # Strong challenger  
+            "paypal": 3,    # Established player
+            "adyen": 4,     # Growing competitor
+            "square": 5     # Niche player
+        }
+        
         for i in range(count):
             compared_processors = random.sample(competitors, min(2, len(competitors)))
+            
+            # Generate competitive advantage based on actual market knowledge
+            advantages = {
+                "visa": "Global acceptance and established trust network",
+                "stripe": "Developer-friendly API and innovative features", 
+                "paypal": "Consumer trust and ease of use",
+                "adyen": "Unified payment solutions and global reach",
+                "square": "Integrated POS and small business focus"
+            }
+            
+            ranking = market_rankings.get(processor_id, random.randint(3, 5))
             
             insight = CompetitiveAnalysisInsight(
                 insight_type=InsightType.COMPETITIVE_ANALYSIS,
                 processor_id=processor_id,
-                title=f"{processor_id.title()} Competitive Position Analysis",
-                content=f"Market position analysis comparing {processor_id} with competitors",
+                title=f"{processor_id.title()} Market Position - Rank #{ranking}",
+                content=f"Market ranking analysis: #{ranking} position with key competitive advantages",
                 source_url=f"https://market-research.com/payment-processors/{processor_id}",
                 confidence_score=random.uniform(0.7, 0.9),
                 timestamp=datetime.utcnow() - timedelta(days=random.randint(1, 30)),
                 compared_processors=compared_processors,
-                competitive_advantage="Lower fees and better developer experience" if processor_id == "stripe" else "Wide acceptance and trust",
-                market_position=random.choice(["leader", "challenger", "follower"]),
+                competitive_advantage=advantages.get(processor_id, "Specialized market positioning"),
+                market_position=str(ranking),  # Now uses numerical ranking
                 pricing_comparison={comp: random.uniform(2.0, 4.0) for comp in compared_processors},
                 feature_comparison={
-                    "international": random.choice([True, False]),
-                    "subscriptions": random.choice([True, False]),
-                    "marketplace": processor_id in ["stripe", "paypal"]
+                    "international": processor_id in ["visa", "stripe", "adyen"],
+                    "subscriptions": processor_id in ["stripe", "adyen"],
+                    "marketplace": processor_id in ["stripe", "paypal", "adyen"]
                 }
             )
             insights.append(insight)

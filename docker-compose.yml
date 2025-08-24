@@ -1,0 +1,150 @@
+# Production-Ready Infrastructure Stack
+# Provides PostgreSQL, Redis, and monitoring for the payment intelligence platform
+
+version: '3.8'
+
+services:
+  # PostgreSQL - Main database for insights, audit logs, and configurations
+  postgres:
+    image: postgres:15-alpine
+    container_name: payment_intel_db
+    environment:
+      POSTGRES_DB: payment_intel
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secure_password_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d payment_intel"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Redis - High-speed caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: payment_intel_cache
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # TimescaleDB - Time-series data for analytics and trends
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    container_name: payment_intel_timeseries
+    environment:
+      POSTGRES_DB: timeseries_intel
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secure_password_123
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d timeseries_intel"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Celery Redis Broker - Background task processing
+  celery_broker:
+    image: redis:7-alpine
+    container_name: payment_intel_celery_broker
+    command: redis-server --port 6380
+    ports:
+      - "6380:6380"
+    volumes:
+      - celery_redis_data:/data
+
+  # MinIO - S3-compatible storage for backups and large datasets
+  minio:
+    image: minio/minio:latest
+    container_name: payment_intel_storage
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: secure_password_123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Grafana - Monitoring and analytics dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: payment_intel_monitoring
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: secure_password_123
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - postgres
+      - redis
+
+  # Prometheus - Metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: payment_intel_metrics
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  # Nginx - Load balancer and reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: payment_intel_gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  timescale_data:
+  celery_redis_data:
+  minio_data:
+  grafana_data:
+  prometheus_data:
+
+networks:
+  default:
+    name: payment_intel_network

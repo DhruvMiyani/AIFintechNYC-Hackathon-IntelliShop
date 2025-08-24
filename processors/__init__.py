@@ -9,6 +9,7 @@ from .base import (
 from .stripe import StripeProcessor
 from .paypal import PayPalProcessor
 from .visa import VisaProcessor
+from .crossmint_processor import CrossmintProcessor
 
 __all__ = [
     'PaymentProcessor',
@@ -19,5 +20,6 @@ __all__ = [
     'ProcessorMetrics',
     'StripeProcessor',
     'PayPalProcessor',
-    'VisaProcessor'
+    'VisaProcessor',
+    'CrossmintProcessor'
 ]
