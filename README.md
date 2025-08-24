@@ -1,4 +1,4 @@
-# 🤖 Orchaim: Claude Intelligent Payment Orchestration System
+# 🤖 IntelliShop Business: Claude Intelligent Payment Orchestration System
 
 ## 🎯 Project Overview
 
@@ -170,7 +170,7 @@ Claude creates realistic transaction patterns that trigger account freezes:
 
 ### Frontend (Next.js Dashboard)
 ```bash
-cd frontend-app-orchaim
+
 npm install
 npm run dev
 # Open http://localhost:3000/dashboard
