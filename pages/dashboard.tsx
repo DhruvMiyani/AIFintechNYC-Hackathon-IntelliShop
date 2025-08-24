@@ -852,11 +852,101 @@ const Dashboard: NextPage = () => {
           <span>Risk Detection</span>
           <span>Synthetic Data</span>
           <span>Freeze Prevention</span>
+          <Link href="/comprehensive-insights-demo" style={{ 
+            color: '#00d4ff', 
+            textDecoration: 'none', 
+            fontWeight: 'bold',
+            padding: '8px 16px',
+            background: 'linear-gradient(45deg, rgba(0,212,255,0.1), rgba(255,107,53,0.1))',
+            borderRadius: '20px',
+            border: '1px solid rgba(0,212,255,0.3)',
+            transition: 'all 0.3s ease'
+          }}>
+            🚀 Brave Search Insights
+          </Link>
         </div>
       </nav>
 
       <main className={styles.main}>
         <div className={styles.dashboardGrid}>
+          {/* Brave Search Insights Demo */}
+          <div className={styles.card} style={{ 
+            background: 'linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,107,53,0.1))',
+            border: '2px solid rgba(0,212,255,0.3)',
+            gridColumn: 'span 2' 
+          }}>
+            <h2 style={{ color: '#00d4ff' }}>🚀 Brave Search Real-Time Market Intelligence</h2>
+            <div className={styles.tagGroup}>
+              <span className={styles.tag}>COMPETITIVE ANALYSIS</span>
+              <span className={styles.tag}>MARKET INTELLIGENCE</span>
+              <span className={styles.tag}>FRAUD TRENDS</span>
+              <span className={styles.tag}>SOCIAL SENTIMENT</span>
+            </div>
+            <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '14px', lineHeight: '1.6' }}>
+              Access comprehensive real-time market insights powered by Brave Search API. Get competitive analysis, 
+              market intelligence, fraud trend monitoring, and social sentiment analysis for your payment orchestration decisions.
+            </p>
+            <div className={styles.riskMetrics}>
+              <div className={styles.riskScore}>
+                <div className={styles.riskLabel}>Insight Types</div>
+                <div className={styles.riskValue}>10</div>
+              </div>
+              <div className={styles.riskScore}>
+                <div className={styles.riskLabel}>Data Sources</div>
+                <div className={styles.riskValue}>Live</div>
+              </div>
+              <div className={styles.riskScore}>
+                <div className={styles.riskLabel}>Synthetic Data</div>
+                <div className={styles.riskValue}>Active</div>
+              </div>
+            </div>
+            <div className={styles.buttonGroup}>
+              <Link 
+                href="/comprehensive-insights-demo" 
+                style={{ textDecoration: 'none' }}
+              >
+                <button
+                  className={styles.submitButton}
+                  style={{
+                    background: 'linear-gradient(45deg, #00d4ff, #ff6b35)',
+                    border: 'none',
+                    borderRadius: '25px',
+                    padding: '14px 28px',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(0, 212, 255, 0.3)'
+                  }}
+                >
+                  🌐 Launch Comprehensive Demo
+                </button>
+              </Link>
+              <button className={styles.agentButton} style={{ opacity: 0.7 }}>
+                View Documentation
+              </button>
+            </div>
+            <div className={styles.terminal} style={{ marginTop: '15px' }}>
+              <div className={styles.terminalHeader}>
+                Real-Time Market Intelligence Features<br />
+                6 Interactive Tabs • Live Brave Search Integration • Synthetic Data Generator
+              </div>
+              <div className={styles.terminalText} style={{ fontSize: '13px' }}>
+                <strong>Available Features:</strong><br />
+                • Smart Routing with market insights<br />
+                • Competitive analysis dashboard<br />
+                • Market intelligence monitoring<br />
+                • Synthetic data generation and testing<br />
+                • Scenario testing with multiple risk profiles<br />
+                • Deep insights with fraud trend analysis
+              </div>
+              <div className={styles.success}>
+                ✓ Powered by Brave Search API • Real-time data • 10 insight types • Comprehensive analytics
+              </div>
+            </div>
+          </div>
+
           {/* Claude Transaction Risk Analysis */}
           <div className={styles.card}>
             <h2>🤖 Claude Risk Analysis Engine</h2>

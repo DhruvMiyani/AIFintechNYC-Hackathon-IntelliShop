@@ -23,7 +23,7 @@ class ClaudeClient:
     
     def __init__(self):
         self.api_key = os.getenv("ANTHROPIC_API_KEY")
-        self.model = "claude-3-5-sonnet-20241022"
+        self.model = "claude-3-5-sonnet-20240620"
         self.client = AsyncAnthropic(api_key=self.api_key)
         
         if not self.api_key:
