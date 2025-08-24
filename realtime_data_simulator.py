@@ -13,8 +13,8 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 import uuid
 
-from gpt5_client import GPT5Client
-from gpt5_stripe_data_generator import GPT5StripeDataGenerator, StripeTransaction
+from claude_client import ClaudeClient
+from stripe_synthetic_data_generator import GPT5StripeDataGenerator, StripeTransaction
 
 
 class StreamingMode(Enum):
@@ -37,7 +37,7 @@ class RealtimeStreamSimulator:
     """
     
     def __init__(self):
-        self.gpt5_client = GPT5Client()
+        self.claude_client = ClaudeClient()
         self.data_generator = GPT5StripeDataGenerator()
         self.is_active = False
         self.stream_buffer = []
