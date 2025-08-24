@@ -8,15 +8,15 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Orchaim - MCP Server for Agentic Shopping</title>
-        <meta name="description" content="Model Context Protocol server enabling AI agents to safely manage shopping transactions with intelligent payment orchestration." />
+        <title>IntelliShop - Payment Provider for Agent Shopping</title>
+        <meta name="description" content="Payment provider enabling AI agents to safely manage shopping transactions with intelligent payment orchestration." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <nav className={styles.nav}>
         <div className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span>
-          Orchaim
+          <span className={styles.logoIcon}>💳</span>
+          IntelliShop
         </div>
         <div className={styles.navLinks}>
           <a href="#features">Features</a>
@@ -31,12 +31,12 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <section className={styles.hero}>
           <div className={styles.heroContent}>
-            <div className={styles.badge}>MCP SERVER • AI AGENT COMMERCE</div>
+            <div className={styles.badge}>PAYMENT PROVIDER • AI AGENT COMMERCE</div>
             <h1 className={styles.heroTitle}>
-              This is why AI agents shop smart
+              Intelligent Payment Infrastructure for AI Agents
             </h1>
             <p className={styles.heroDescription}>
-              Model Context Protocol server enabling Future Shopping Agents from OpenAI, Visa, and Perplexity to safely initiate, reroute, and complete purchases with trusted payment orchestration.
+              Payment provider enabling Future Shopping Agents from OpenAI, Visa, and Perplexity to safely initiate, reroute, and complete purchases with trusted payment orchestration.
             </p>
 
             <div className={styles.savingsSection}>
@@ -64,22 +64,22 @@ const Home: NextPage = () => {
                   <span className={styles.approvedText}>AGENTS<br/>APPROVED</span>
                 </div>
               </div>
-              <h2 className={styles.demoTitle}>Your AI Shopping Agent</h2>
+              <h2 className={styles.demoTitle}>Payment Provider for Agent Shopping</h2>
               <p className={styles.demoDescription}>
                 Use MCP to call, route, and orchestrate payments with intelligent processor selection and compliance boundaries for autonomous shopping experiences.
               </p>
               <div className={styles.demoFeatures}>
                 <div className={styles.demoFeature}>
-                  <span className={styles.featureIcon}>🛡️</span>
-                  Safe Transaction Boundaries
+                  <span className={styles.featureIcon}>💳</span>
+                  Secure Payment Processing
                 </div>
                 <div className={styles.demoFeature}>
-                  <span className={styles.featureIcon}>⚡</span>
-                  Intelligent Routing
+                  <span className={styles.featureIcon}>🤖</span>
+                  AI Agent Integration
                 </div>
                 <div className={styles.demoFeature}>
-                  <span className={styles.featureIcon}>📋</span>
-                  Full Audit Trail
+                  <span className={styles.featureIcon}>🔄</span>
+                  Smart Routing & Fallbacks
                 </div>
               </div>
             </div>
@@ -121,7 +121,7 @@ const Home: NextPage = () => {
 
         <section className={styles.cta}>
           <h2>Ready to enable autonomous shopping?</h2>
-          <p>Join the future of AI-powered commerce with Orchaim's MCP server.</p>
+          <p>Join the future of AI-powered commerce with IntelliShop&apos;s payment provider.</p>
           <Link href="/dashboard">
             <button className={styles.ctaButtonLarge}>Get Started Today</button>
           </Link>
@@ -129,7 +129,7 @@ const Home: NextPage = () => {
       </main>
 
       <footer className={styles.footer}>
-        <p>© 2024 Orchaim. Powering the future of agentic commerce.</p>
+        <p>© 2024 IntelliShop. Powering the future of agentic commerce.</p>
       </footer>
     </div>
   );

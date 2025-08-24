@@ -261,10 +261,10 @@ const Dashboard: NextPage = () => {
       // Generate chart data based on synthetic dataset
       const scenarios = Object.entries(datasetInfo.scenarios);
       const chartVisData = {
-        scenarios: scenarios.map(([name, data]) => ({
+        scenarios: scenarios.map(([name, data]: [string, any]) => ({
           name: name.replace('_', ' ').toUpperCase(),
-          transactions: data.transaction_count,
-          risk: data.freeze_risk,
+          transactions: data.transaction_count || 0,
+          risk: data.freeze_risk || 'low',
           rate: data.refund_rate || data.chargeback_rate || 0,
           color: data.freeze_risk === 'critical' ? '#ff4757' : 
                  data.freeze_risk === 'high' ? '#ffa502' : '#2ed573'
@@ -290,12 +290,12 @@ const Dashboard: NextPage = () => {
     }
   };
 
-  const generateTimelineData = (dataset) => {
+  const generateTimelineData = (dataset: any) => {
     // Simulate timeline data for visualization
     const days = Array.from({length: 30}, (_, i) => {
       const day = i + 1;
-      const baseline = Math.floor(dataset.baseline.daily_average * (0.8 + Math.random() * 0.4));
-      const spike = day === 25 ? dataset.scenarios.volume_spike.transaction_count / 10 : 0;
+      const baseline = Math.floor((dataset?.baseline?.daily_average || 50) * (0.8 + Math.random() * 0.4));
+      const spike = day === 25 ? (dataset?.scenarios?.volume_spike?.transaction_count || 0) / 10 : 0;
       return {
         day,
         transactions: baseline + spike,
@@ -305,11 +305,11 @@ const Dashboard: NextPage = () => {
     return days;
   };
 
-  const calculateRiskDistribution = (scenarios) => {
+  const calculateRiskDistribution = (scenarios: [string, any][]) => {
     const distribution = { safe: 0, elevated: 0, critical: 0 };
     scenarios.forEach(([name, data]) => {
-      if (data.freeze_risk === 'critical') distribution.critical++;
-      else if (data.freeze_risk === 'high') distribution.elevated++;
+      if (data?.freeze_risk === 'critical') distribution.critical++;
+      else if (data?.freeze_risk === 'high') distribution.elevated++;
       else distribution.safe++;
     });
     return distribution;
@@ -709,7 +709,7 @@ const Dashboard: NextPage = () => {
               </p>
             </div>
             
-            <div style={{ space: '20px' }}>
+            <div style={{ padding: '20px' }}>
               {analysisSteps.map((step: any, index) => (
                 <div 
                   key={index}
@@ -769,7 +769,7 @@ const Dashboard: NextPage = () => {
                 </div>
               ))}
               
-              {reasoningSteps.length > 0 && (
+              {analysisSteps.length > 0 && (
                 <div style={{
                   textAlign: 'center',
                   marginTop: '20px'
@@ -926,7 +926,7 @@ const Dashboard: NextPage = () => {
               <div className={styles.terminal}>
                 <div className={styles.terminalHeader}>
                   POST /data/analyze<br />
-                  reasoning.effort={analysisResults.reasoning_effort_used || reasoningEffort} | text.verbosity={analysisResults.verbosity_used || "auto"} | Risk: {analysisResults.risk_level.toUpperCase()}
+                  complexity={analysisResults.complexity_used || analysisComplexity} | Risk: {analysisResults.risk_level.toUpperCase()}
                 </div>
                 <div className={styles.terminalText}>
                   <strong>📊 Claude Parameters:</strong><br />
@@ -1063,10 +1063,10 @@ const Dashboard: NextPage = () => {
                   <strong>Scenarios Generated:</strong><br />
                   {Object.entries(syntheticData.scenarios).map(([name, data]: [string, any]) => (
                     <div key={name}>
-                      • {name}: {data.transaction_count} txns 
-                      ({data.freeze_risk} risk 
-                      {data.refund_rate && `, ${data.refund_rate.toFixed(1)}% refund rate`}
-                      {data.chargeback_rate && `, ${data.chargeback_rate.toFixed(1)}% chargeback rate`})
+                      • {name}: {data?.transaction_count || 0} txns 
+                      ({data?.freeze_risk || 'low'} risk 
+                      {data?.refund_rate && `, ${data.refund_rate.toFixed(1)}% refund rate`}
+                      {data?.chargeback_rate && `, ${data.chargeback_rate.toFixed(1)}% chargeback rate`})
                     </div>
                   ))}
                 </div>
