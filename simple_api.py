@@ -13,6 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 
+# Import custom processors
+from crossmint_processor import CrossmintPaymentProcessor
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Claude Payment Demo API",
@@ -48,7 +51,13 @@ class VisaMCPRequest(BaseModel):
     customer_email: str = ""
     customer_name: str = ""
     description: str
-    payment_type: str = "auto"
+
+class CrossmintRequest(BaseModel):
+    amount: float
+    currency: str  # usdc, sol, eth, matic
+    chain: str  # solana, ethereum, polygon
+    customer_email: str
+    description: str
     analysis_complexity: str = "balanced"
 
 @app.get("/")
@@ -746,6 +755,116 @@ Claude Intelligence Applied:
         "visa_mcp_integration": True,
         "tools_successful": True
     }
+
+@app.post("/payments/crossmint")
+async def process_crossmint_payment(request: CrossmintRequest):
+    """
+    Process payment through Crossmint Wallets
+    Crypto payment alternative with Web3 integration
+    """
+    
+    try:
+        print(f"🌐 Crossmint payment request: {request.amount} {request.currency.upper()} on {request.chain}")
+        
+        # Initialize Crossmint processor
+        crossmint_processor = CrossmintPaymentProcessor()
+        
+        # Process payment
+        result = await crossmint_processor.process_payment(
+            amount=request.amount,
+            currency=request.currency,
+            description=request.description,
+            customer_email=request.customer_email,
+            chain=request.chain
+        )
+        
+        if result.success:
+            # Get additional wallet information
+            processor_info = crossmint_processor.get_processor_info()
+            balances = await crossmint_processor.get_wallet_balances(
+                request.customer_email, 
+                request.chain
+            )
+            
+            return {
+                "success": True,
+                "processor_used": "crossmint",
+                "transaction_id": result.transaction_id,
+                "wallet_address": result.wallet_address,
+                "explorer_link": result.explorer_link,
+                "chain": result.chain,
+                "currency": result.currency,
+                "processing_time_ms": result.processing_time,
+                "crossmint_features": {
+                    "wallet_based": True,
+                    "crypto_native": True,
+                    "cross_chain_support": True,
+                    "global_access": True,
+                    "web3_integration": True
+                },
+                "wallet_info": {
+                    "address": result.wallet_address,
+                    "chain": request.chain,
+                    "balances": balances
+                },
+                "processor_capabilities": {
+                    "supported_chains": processor_info["supported_chains"],
+                    "supported_currencies": processor_info["supported_currencies"],
+                    "freeze_resistance": processor_info["freeze_resistance"],
+                    "max_amount": processor_info["max_amount"]
+                },
+                "claude_analysis": {
+                    "routing_reason": f"Crypto/Web3 payment selected for {request.description}",
+                    "complexity": request.analysis_complexity,
+                    "confidence": 0.92,
+                    "processor_health": "excellent",
+                    "decentralized_advantage": True
+                }
+            }
+        else:
+            return {
+                "success": False,
+                "processor_used": "crossmint",
+                "error": result.error,
+                "processing_time_ms": result.processing_time,
+                "suggested_action": "Check wallet balance or try different chain/currency"
+            }
+            
+    except Exception as e:
+        print(f"❌ Crossmint payment error: {e}")
+        return {
+            "success": False,
+            "processor_used": "crossmint",
+            "error": f"Crossmint integration error: {str(e)}",
+            "processing_time_ms": 0
+        }
+
+@app.get("/payments/crossmint/info")
+async def get_crossmint_info():
+    """Get Crossmint processor information and capabilities"""
+    
+    try:
+        processor = CrossmintPaymentProcessor()
+        info = processor.get_processor_info()
+        
+        return {
+            "processor": info,
+            "integration_status": "active",
+            "sdk_version": "@crossmint/wallets-sdk v0.11.8",
+            "demo_mode": True,
+            "setup_instructions": {
+                "step_1": "npm install @crossmint/wallets-sdk",
+                "step_2": "Set CROSSMINT_API_KEY environment variable",
+                "step_3": "Configure JWT for client-side calls",
+                "step_4": "Use Crossmint routing for crypto payments"
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "error": f"Failed to get Crossmint info: {str(e)}",
+            "integration_status": "error"
+        }
 
 if __name__ == "__main__":
     uvicorn.run(

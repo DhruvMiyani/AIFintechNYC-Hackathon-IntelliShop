@@ -852,6 +852,26 @@ const Dashboard: NextPage = () => {
           <span>Risk Detection</span>
           <span>Synthetic Data</span>
           <span>Freeze Prevention</span>
+          <Link href="/crossmint-demo" className={styles.navLink}>
+            <span style={{ 
+              background: 'linear-gradient(45deg, #8B5CF6, #06B6D4)', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 'bold'
+            }}>
+              🌐 Crossmint Wallets
+            </span>
+          </Link>
+          <Link href="/realtime-routing" className={styles.navLink}>
+            <span style={{ 
+              background: 'linear-gradient(45deg, #F59E0B, #EF4444)', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 'bold'
+            }}>
+              🔄 Live Routing
+            </span>
+          </Link>
         </div>
       </nav>
 

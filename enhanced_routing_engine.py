@@ -24,6 +24,7 @@ class ProcessorType(Enum):
     SQUARE = "square"
     VISA = "visa"
     ADYEN = "adyen"
+    CROSSMINT = "crossmint"
 
 @dataclass
 class ProcessorHealth:
@@ -100,6 +101,15 @@ class EnhancedClaudeRoutingEngine:
                 "best_for": ["international", "enterprise", "high_volume"],
                 "geographic_strength": ["EU", "ASIA", "GLOBAL"],
                 "freeze_resistance": 0.8
+            },
+            ProcessorType.CROSSMINT: {
+                "max_amount": 500000,
+                "best_for": ["crypto", "web3", "defi", "nft", "international"],
+                "geographic_strength": ["GLOBAL", "CRYPTO"],
+                "freeze_resistance": 0.95,
+                "supported_chains": ["solana", "ethereum", "polygon"],
+                "supported_currencies": ["usdc", "sol", "eth", "matic"],
+                "features": ["wallet_creation", "cross_chain", "email_based"]
             }
         }
     
@@ -346,6 +356,8 @@ class EnhancedClaudeRoutingEngine:
         # Enterprise-level transactions (truly large amounts) for enhanced security
         if amount > 100000:  # $1000+ for enterprise-level security and compliance
             return ProcessorType.VISA
+        elif any(keyword in description.lower() for keyword in ["crypto", "web3", "defi", "nft", "token", "blockchain", "wallet"]):
+            return ProcessorType.CROSSMINT
         elif any(keyword in description.lower() for keyword in ["b2b", "enterprise", "business", "subscription"]):
             return ProcessorType.STRIPE
         elif any(keyword in description.lower() for keyword in ["marketplace", "ecommerce", "consumer"]):
@@ -492,6 +504,18 @@ async def main():
             "currency": "USD",
             "description": "Consumer purchase",
             "complexity": "simple"
+        },
+        {
+            "amount": 200,
+            "currency": "USDC",
+            "description": "NFT marketplace purchase with crypto wallet",
+            "complexity": "balanced"
+        },
+        {
+            "amount": 500,
+            "currency": "USDC",
+            "description": "DeFi protocol payment via blockchain",
+            "complexity": "comprehensive"
         }
     ]
     
